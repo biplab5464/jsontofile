@@ -1,0 +1,7 @@
+temp
+my_failed.json
+small_template.json
+template.json
+cargo.lock
+target/*
+!target/release/jsontofile
