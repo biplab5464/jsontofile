@@ -10,5 +10,4 @@ This Rust version offers significant performance and stability improvements over
 
 [Downlaod Link for windows](https://github.com/biplab5464/jsontofile/blob/main/target/x86_64-pc-windows-gnu/release/jsontofile.exe)
 
-Developed by: Biplab Garita
-
+Originally developed by: Biplab Gartia
