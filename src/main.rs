@@ -21,6 +21,9 @@ struct Command {
     ///Output directory for the generated JSON files (defaults to ./temp directory)
     #[arg(long, short)]
     output: Option<String>,
+    ///number of spaces for json in pretty form (only works in pretty form)
+    #[arg(long="space",short='s')]
+    json_space : Option<u16>,
     ///custom filename for the ouput json 
     #[arg(long,short)]
     filename: Option<String> 
@@ -91,13 +94,18 @@ fn main() {
         Some(tmp_str) => Filename::new(tmp_str)
     };
 
+    let spaces = match args.json_space {
+        None => 2,
+        Some(tmp ) => tmp
+    };
+
     for obj in json.members() {
         let path = format!("{output_path}/{}",file_name.get_file_name(obj));
         let name = Path::new(&path);
 
         let obj_string = match args.compact {
             true => stringify(obj.clone()),
-            false => stringify_pretty(obj.clone(), 2),
+            false => stringify_pretty(obj.clone(), spaces),
         };
 
         let mut write_file =
