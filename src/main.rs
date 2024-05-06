@@ -1,35 +1,38 @@
+/// Originally "jsontofile" by biplab5464
+
 use clap::Parser;
 use json::{stringify, stringify_pretty, JsonValue};
 use std::fs::{self, read_to_string, File};
 use std::io::Write;
 use std::path::Path;
- 
+
 #[derive(Parser, Debug)]
 #[command(
     version,
-    about = "The tool is used to convert a JSON array of objects to individual JSON files"
+    about = "This command line tool is used to convert a single JSON file containing array of objects to seperate JSON files, each containing one array object. All output files are stored in one folder."
 )]
+
 struct Command {
-    /// The file must be a json array of josn object
+    /// The file must be a JSON array
     file: String,
-    ///print in compacted form in json, if not provided it print in pretty from
+    /// If provided print in compacted form, else print in pretty from
     #[arg(long)]
     compact: bool,
-    ///no print to the stdout
+    /// Don't print to stdout
     #[arg(long)]
     quite: bool,
-    ///Output directory for the generated JSON files (defaults to ./temp directory)
+    /// Output directory for the generated JSON files (defaults to ./temp directory)
     #[arg(long, short)]
     output: Option<String>,
-    ///number of spaces for json in pretty form (only works in pretty form)
+    /// Number of spaces for JSON in pretty form (only works in pretty form)
     #[arg(long="space",short='s')]
     json_space : Option<u16>,
-    ///custom filename for the ouput json 
+    /// Custom filename for output JSON files
     #[arg(long,short)]
     filename: Option<String> 
 }
 
-struct Filename{
+struct Filename {
     file_name : String,
     ids : Vec<String>
 }
@@ -54,7 +57,7 @@ impl Filename {
             }
         }
     
-        Filename{
+        Filename {
             ids,
             file_name
         }
@@ -62,8 +65,8 @@ impl Filename {
     
     fn get_file_name( &self, json : &JsonValue) -> String {
         let mut return_str = self.file_name.clone();
-        for ele in self.ids.iter(){
-            let temp = json[ele].as_str().expect("Something wrong with the string given with the --filename or -f or the var not avaliable");
+        for ele in self.ids.iter() {
+            let temp = json[ele].as_str().expect("Element not present in specified JSON file");
             return_str = return_str.replace(&format!("{{{}}}", ele), temp);
         }
         return_str
@@ -74,15 +77,15 @@ fn main() {
     let args = Command::parse();
 
     //println!("got it  = {:?}", args.file);
-    let file = read_to_string(args.file).expect("Unable to Read the file \n Please give the correct file for the file");
+    let file = read_to_string(args.file).expect("Unable to read the specified file. Please input the correct filename.");
 
     let json: JsonValue =
-        json::parse(&file).expect("Unable to read json,\n Please check th json file");
+        json::parse(&file).expect("Unable to read JSON, please check the JSON file.");
 
     let output_path = match args.output {
         None => {
             if !Path::new("./temp").exists() {
-                fs::create_dir_all("./temp").expect("unable to create temp dir");
+                fs::create_dir_all("./temp").expect("Unable to create temp directory.");
             }
             "./temp".to_string()
         }
@@ -109,10 +112,10 @@ fn main() {
         };
 
         let mut write_file =
-            File::create(name).expect("problem with opening the file maybe present before");
+            File::create(name).expect("Error in creating the new file. Permission may not be available.");
         write_file
             .write_all(obj_string.as_bytes())
-            .expect("Probem with writeing the file");
+            .expect("Problem with writing the file");
 
         if !args.quite {
             println!("saved {}", name.display());
