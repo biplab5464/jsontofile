@@ -1,3 +1,5 @@
+/// Originally "jsontofile" by biplab5464
+
 use clap::Parser;
 use json::{stringify, stringify_pretty, JsonValue};
 use std::fs::{self, read_to_string, File};
@@ -7,7 +9,7 @@ use std::path::Path;
 #[derive(Parser, Debug)]
 #[command(
     version,
-    about = "The tool is used to convert a JSON array of objects to individual JSON files"
+    about = "This command line tool is used to convert a single JSON file containing array of objects to seperate JSON files, each containing one array object. All output files are stored in one folder."
 )]
 struct Command {
     /// The file must be a json array of josn object
@@ -29,7 +31,7 @@ struct Command {
     filename: Option<String> 
 }
 
-struct Filename{
+struct Filename {
     file_name : String,
     ids : Vec<String>
 }
@@ -54,7 +56,7 @@ impl Filename {
             }
         }
     
-        Filename{
+        Filename {
             ids,
             file_name
         }
@@ -62,7 +64,7 @@ impl Filename {
     
     fn get_file_name( &self, json : &JsonValue) -> String {
         let mut return_str = self.file_name.clone();
-        for ele in self.ids.iter(){
+        for ele in self.ids.iter() {
             let temp = json[ele].as_str().expect("Something wrong with the string given with the --filename or -f or the var not avaliable");
             return_str = return_str.replace(&format!("{{{}}}", ele), temp);
         }
@@ -74,15 +76,15 @@ fn main() {
     let args = Command::parse();
 
     //println!("got it  = {:?}", args.file);
-    let file = read_to_string(args.file).expect("Unable to Read the file \n Please give the correct file for the file");
+    let file = read_to_string(args.file).expect("Unable to read the specified file. Please input the correct filename.");
 
     let json: JsonValue =
-        json::parse(&file).expect("Unable to read json,\n Please check th json file");
+        json::parse(&file).expect("Unable to read JSON, please check the JSON file.");
 
     let output_path = match args.output {
         None => {
             if !Path::new("./temp").exists() {
-                fs::create_dir_all("./temp").expect("unable to create temp dir");
+                fs::create_dir_all("./temp").expect("Unable to create temp directory.");
             }
             "./temp".to_string()
         }
@@ -109,7 +111,7 @@ fn main() {
         };
 
         let mut write_file =
-            File::create(name).expect("problem with opening the file maybe present before");
+            File::create(name).expect("Error in creating the new file. An existing file may have the same name.");
         write_file
             .write_all(obj_string.as_bytes())
             .expect("Probem with writeing the file");
