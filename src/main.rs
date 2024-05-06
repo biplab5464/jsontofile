@@ -12,9 +12,9 @@ use std::path::Path;
 struct Command {
     /// The file must be a json array of josn object
     file: String,
-    ///print in formated form in json, if not provided it print in compact from
+    ///print in compacted form in json, if not provided it print in pretty from
     #[arg(long)]
-    pretty: bool,
+    compact: bool,
     ///no print to the stdout
     #[arg(long)]
     quite: bool,
@@ -95,9 +95,9 @@ fn main() {
         let path = format!("{output_path}/{}",file_name.get_file_name(obj));
         let name = Path::new(&path);
 
-        let obj_string = match args.pretty {
-            false => stringify(obj.clone()),
-            true => stringify_pretty(obj.clone(), 2),
+        let obj_string = match args.compact {
+            true => stringify(obj.clone()),
+            false => stringify_pretty(obj.clone(), 2),
         };
 
         let mut write_file =
