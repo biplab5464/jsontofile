@@ -15,21 +15,21 @@ use std::path::Path;
 struct Command {
     /// The file must be a JSON array
     file: String,
+    /// Custom filename for output JSON files
+    #[arg(long,short)]
+    filename: Option<String>,
+    /// Output directory for the generated JSON files (defaults to ./temp directory)
+    #[arg(long, short)]
+    output: Option<String>,
     /// If provided print in compacted form, else print in pretty from
     #[arg(long)]
     compact: bool,
     /// Don't print to stdout
     #[arg(long)]
     quite: bool,
-    /// Output directory for the generated JSON files (defaults to ./temp directory)
-    #[arg(long, short)]
-    output: Option<String>,
     /// Number of spaces for JSON in pretty form (only works in pretty form)
     #[arg(long="space",short='s')]
     json_space : Option<u16>,
-    /// Custom filename for output JSON files
-    #[arg(long,short)]
-    filename: Option<String> 
 }
 
 struct Filename {
