@@ -30,6 +30,9 @@ struct Command {
     /// Number of spaces for JSON in pretty form (only works in pretty form)
     #[arg(long="space",short='s')]
     json_space : Option<u16>,
+    //remove _id from JSON
+    #[arg(long = "rmdashid")]
+    remove_id : bool
 }
 
 struct Filename {
@@ -79,7 +82,7 @@ fn main() {
     //println!("got it  = {:?}", args.file);
     let file = read_to_string(args.file).expect("Unable to read the specified file. Please input the correct filename.");
 
-    let json: JsonValue =
+    let mut json: JsonValue =
         json::parse(&file).expect("Unable to read JSON, please check the JSON file.");
 
     let output_path = match args.output {
@@ -102,9 +105,13 @@ fn main() {
         Some(tmp ) => tmp
     };
 
-    for obj in json.members() {
+    for obj in json.members_mut() {
         let path = format!("{output_path}/{}",file_name.get_file_name(obj));
         let name = Path::new(&path);
+
+        if args.remove_id {
+            obj.remove("_id");
+        }
 
         let obj_string = match args.compact {
             true => stringify(obj.clone()),
